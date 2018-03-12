@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+
+{% block bodycontent %}
+
+<style>
+    .modal{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        display: none;
+        background: rgba(75, 73, 72, 0.46);
+        right: 0;
+        transform: all .5s;
+    }
+    .modal-dialog{
+        min-width: 40%;
+        height:500px;
+        border: 1px solid rgb(153, 153, 153);
+        border-radius: 5px;
+        position: absolute;
+        background: rgb(255, 255, 255);
+        top: 42%;
+        transform: translate(-50%,-50%);
+        left: 50%;
+    }
+    @media screen and (max-width:764px){
+        .modal-dialog{
+            min-width: 350px;
+        }
+    }
+    .modal-header,.modal-content,.modal-controller{
+        padding:8px 15px;
+    }
+    .modal-header{
+        background: rgb(37, 153, 242);
+        color: rgb(255, 255, 255);
+        border-top-left-radius: 3px;
+        border-top-right-radius: 3px;
+    }
+    .modal-controller{
+        background: rgb(247, 247, 247);
+        border-top: 1px solid rgba(153, 153, 153, 0.31);
+    }
+    .modal-header .close{
+        float: right;
+        margin-right: -10px;
+        text-decoration: none;
+        font-size: 30px;
+        margin-top: -11px;
+        color: rgb(255, 255, 255);
+        font-weight: 300;
+    }
+    .modal-content{
+        height:405px;
+    }
+    .modal-content .upload{
+        float: left;
+    }
+    .modal-content img{
+        border: 3px solid #d3cdcd;
+    }
+    .modal-content img:hover{
+        cursor: pointer;
+    }
+    .modal-content .file
+    {
+        position: absolute;
+        left: 18px;
+        top: 47px;
+        width: 131px;
+        height: 130px;
+        opacity: 0;
+    }
+
+
+    .modal-controller{
+        text-align: center;
+    }
+    .modal button{
+        padding: 8px 10px;
+        border-radius: 5px;
+        border: 1px solid #66666612;
+        margin-left:650px;
+    }
+    .modal .btn-ok{
+        background: #2599F2;
+    }
+</style>
+<style>
+    .containt{
+        width: 100%;
+        height: 600px;
+    }
+    #photobody{
+        width: 1000px;
+        height: 600px;
+        background: white;
+        margin:0 auto;
+        text-align: center;
+    }
+    #photoheader{
+        height:45px;
+        border-bottom: solid;
+    }
+    .div1{
+        height:45px;
+        line-height: 45px;
+    }
+    .myphoto{
+        float: left;
+        margin-left: 20px;
+    }
+    #photoheader .upload{
+        float: right;
+        margin-right:20px;
+    }
+
+</style>
+    <div class="containt">
+    <div id="photobody">
+        <div id="photoheader">
+            <div class="div1">
+                <ul>
+                    <li class="myphoto">我的图库</li>
+                    <li class="upload"><a href="#" onclick="openModal()">上传</a></li>
+                </ul>
+            </div>
+        </div>
+        <div id="photocontent">
+            <ul>
+                <li><img src="/static/images/01.jpg" width="300" height="300"></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="modal" id='modal'>
+    <div class="modal-dialog">
+        <div class="modal-header">上传图片<a href="#" class="close">×</a></div>
+        <div class="modal-content">
+
+            <form class="upload" enctype="multipart/form-data">
+                <img src="/static/images/photo_img/add.png">
+                <input class="file" id="file" type="file" name="file">
+            </form>
+        </div>
+        <div class="modal-controller">
+            <button class='btn-ok' onclick="uploadFile()">开始上传</button>
+            {% comment %}<button class='bnt-close close'>取消</button>{% endcomment %}
+        </div>
+    </div>
+</div>
+<script>
+    (function(window){
+        var Modal=function(ele){
+            this.$el=ele;
+            this.init();
+        }
+        Modal.prototype.close=function(){
+            this.$el.style.display='none';
+        }
+        Modal.prototype.open=function(){
+            this.$el.style.display='block';
+        }
+        Modal.prototype.save=function () {
+
+        }
+        Modal.prototype.init=function(){
+            var self=this;
+            if(this.$el.addEventListener){
+                this.$el.addEventListener('click',function(e){
+                    var target=e.target;
+                    var classNames=target.className.split(' ');
+                    if(classNames.indexOf('close')!==-1){
+                        self.close();
+                    }
+                },false);
+            }else if(this.$el.attachEvent){
+                this.$el.attachEvent('onclick',function(e){
+                        e=e||window.event;
+                    var target=e.target||e.srcElement;
+                    var classNames=target.className.split(' ');
+                    if(classNames.indexOf('close')!==-1){
+                        self.close();
+                    }
+                });
+            }
+        }
+        window.Modal=Modal;
+    })(window);
+    var modal=new Modal(document.getElementById('modal'));
+    function openModal(){
+        modal.open();
+    }
+    function uploadFile(){
+        var fileObj = $("#file")[0].files
+        var form = {
+            title:fileObj.name,
+            file:fileObj
+        }
+        $.ajax({
+            type:'POST',
+            url:'/grzx/upload_files/',
+            data:form,
+            processData:false,
+            contentType:false,
+            success:function (arg) {
+                alert('success:'+arg)
+            },
+            error:function (err) {
+                alert('error:'+ err)
+            }
+        })
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+</head>
+<style>
+    body{
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        font-size:14px;
+        line-heigh:1.5;
+        color:#24292e;
+        margin:0;
+        display: block;
+    }
+    .logged-out{
+        background-color: rgba(137, 145, 154, 0.14);
+    }
+    *{
+        box-sizing: border-box;
+    }
+    .header{
+        padding-top:32px !important;
+        padding-bottom: 24px !important;
+
+    }
+    .width-full{
+        width:100% !important;
+    }
+    .center{
+        text-align: center;
+    }
+    div{
+        display: block;
+    }
+    .clearfix::before{
+        display: table;
+        content: "";
+    }
+    .clearfix::after{
+        display: table;
+        clear: both;
+        content:"";
+    }
+    .auth-form {
+        width: 340px;
+        margin: 0 auto;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+    form{
+        display: block;
+        margin-top:0em;
+    }
+    .auth-form-header{
+        margin-bottom: 15px;
+        color: #333;
+        text-align: center;
+        text-shadow: none;
+        background-color: transparent;
+        border: 0;
+        padding:0;
+    }
+    #login .auth-form-header h1{
+        margin-top:0px;
+        margin-bottom: 0px;
+        font-size: 24px;
+        font-weight:300;
+        letter-spacing: -0.5px;
+    }
+    .flash{
+        padding: 15px 20px;
+        margin: 0 auto;
+        margin-bottom: 10px;
+        font-size: 13px;
+        border-style: solid;
+        border-width: 1px;
+        border-radius: 5px;
+    }
+    .flash-error{
+        background-color: #ffdce0;
+        color:#86181d;
+        border-color: #1b1f2326;
+    }
+    .auth-form-body{
+        border-style: solid;
+        border-width:1px;
+        border-color: #bfbfbf;
+        border-radius:5px;
+        background-color: #89919a;
+        padding:20px;
+        background-color: #fff;
+    }
+     .form-label{
+        display: block;
+        font-weight: 600;
+    }
+    .form-control{
+        height:35px;
+        border-radius: 5px;
+        border-style: solid;
+        border-width: 1px;
+        border-color: #bfbfbf;
+    }
+    .input-block{
+        display: block;
+        width:100%;
+        margin-top:5px;
+        margin-bottom: 15px;
+    }
+    .btn{
+        margin-top:20px;
+        padding: 6px 12px;
+        line-height: 20px;
+        border: 1px solid rgba(27,31,35,0.2);
+        border-radius: 0.25em;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .btn:hover{
+        text-decoration: none;
+        background-repeat: repeat-x;
+    }
+    .btn-block{
+        display: block;
+        width:100%;
+        text-align: center;
+    }
+    .btn-primary{
+        color: #fff;
+        background-color: #269f42;
+        background-image: linear-gradient(-180deg, #34d058 0%, #28a745 90%);
+    }
+    .btn-primary:hover {
+        background-position: 0 2.5em;
+        background-image: linear-gradient(-180deg, #34d058 0%, #28a745 90%);
+    }
+
+</style>
+<body class="logged-out">
+    <div class="header width-full center">
+        <div class="container clearfix">
+            <a href="">
+                <svg aria-hidden="true" height="48" viewBox="0 0 16 16" width="48">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+    <div class="main">
+        <div class="container">
+            <div class="auth-form px-3" id="login">
+                <form accept-charset="UTF-8" action="/save_user/" method="post" autocomplete="on">
+                    <div class="auth-form-header">
+                        <h1>Sign up to MyBlog</h1>
+                    </div>
+
+                    <div class="auth-form-body">
+                        <label for="nickname" class="form-label">Username or email address</label>
+                        <input class="form-control input-block" id="nickname" name="nickname" type="text" value="">
+                        <span style="color:red">{{ errorDict.nickname_error }}</span>
+
+                        <lable for="password" class="form-label">Password</lable>
+                        <input class="form-control input-block" id="password" name="password" type="password" value="">
+                        <span style="color:red">{{ errorDict.password_error }}</span>
+
+                        <label for="work" class="form-label">Work</label>
+                        <input class="form-control input-block" id="work" name="work" type="text">
+                        <span style="color:red">{{ errorDict.work_error }}</span>
+
+                        <label for="company" class="form-label">Company</label>
+                        <input class="form-control input-block" id="company" name="company" type="text">
+                        <span style="color:red">{{ errorDict.company_error }}</span>
+
+                        <label for="email" class="form-label">Email</label>
+                        <input class="form-control input-block" id="email" name="email" type="text">
+                        <span style="color:red">{{ errorDict.email_error }}</span>
+
+                        <input type="submit" class="btn btn-primary btn-block" name="commit" value="Sign up">
+                    </div>
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

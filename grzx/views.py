@@ -1,18 +1,88 @@
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from .models import UserInfo, BlogBody
+from django.db import models
+
+from .models import UserInfo, BlogBody,UserInfoForm
 import time
 from django.db import connection
+from django.forms.models import model_to_dict
+import json
+
 # from markdown import markdown
 
 
 # 处理首页已经日常的视图,包含首页,列表显示,文章详情,以及各个type页的列表
 def index(request):
-    userinfo = UserInfo.objects.first()
+    # userinfo = UserInfo.objects.first()
+    userinfo = None
+    status = False
+    if "status" in request.COOKIES:
+        status = request.COOKIES.get('status','')
+        userinfo = request.COOKIES.get('userinfo','')
+
+        #json.loads()将json串转换成dict
+        userinfo = json.loads(userinfo)
     blog_body = BlogBody.objects.all()[:6:-1]
     hot_rank = BlogBody.objects.all().order_by('-blog_clicknum')[:5]
-    return render(request,
+    response = render(request,
                   'index.html',
-                  {'userinfo': userinfo, 'blog_body': blog_body, 'hot_rank': hot_rank})
+                  {'userinfo': userinfo, 'blog_body': blog_body, 'hot_rank': hot_rank,'status':status})
+    #response.delete_cookie("userinfo")
+    #response.delete_cookie("status")
+    request.COOKIES.clear()
+    return response
+
+def login(request):
+    return render(request,"login.html",{"is_show":"none"})
+
+def index_by_account(request):
+    if request.method == "POST":
+        username = request.POST.get("nickname","")
+        password = request.POST.get("password","")
+        userInfo = UserInfo.objects.filter(nickname=username,password=password).first()
+        if userInfo:
+            # 将queryset转换成dict
+            userInfo = model_to_dict(userInfo)
+            response = HttpResponseRedirect("/")
+            #json.dumps(dict)将字典转换成json串
+            response.set_cookie('userinfo',json.dumps(userInfo),max_age=10)
+            response.set_cookie('status',"True",max_age=10)
+            return response
+        else:
+            print("未找到用户名为：",username,"密码为：",password,"的用户！")
+            return render(request, "login.html",{"is_show":"block"})
+    else:
+        return HttpResponse("登录失败！")
+
+def register(request):
+    return render(request,"register.html")
+
+def save_user(request):
+    try:
+        if request.method == 'POST':
+            userinfo = UserInfoForm(request.POST)
+            if userinfo.is_valid():
+                user =userinfo.Meta.module(**userinfo.cleaned_data)
+                # user = UserInfo(**userinfo.cleaned_data)
+                user.save()
+                return render(request,"register_suc.html")
+            else:
+                from django.forms.utils import ErrorDict
+                #userinfo.errors为ErrorDict类型，通过遍历取值,ErrorDict里装的是ErrorList，需再次遍历
+                print("ErrorDict:",userinfo.errors)
+                error = {}
+                for key,list in userinfo.errors.items():
+                    print("key:",key,"list:",list)
+                    for i in list:
+                        print("i：",i)
+                        error[key + '_error'] = i
+                print(str(error))
+                return render(request,"register.html",{"errorDict":error})
+    except:
+        import traceback
+        print(traceback.format_exc())
+
+    return HttpResponse("success")
 
 
 def lists(request):
@@ -84,3 +154,17 @@ def del_article(request, blog_body_id):
 
 def edit_article(request):
     pass
+
+def photo_list(request):
+    return render(request, 'photo_list.html')
+
+def upload_file_form(request):
+    return render(request,'upload_file_form.html')
+
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def upload_files(request):
+    files = request.FILES.getlist('file')
+    print(files)
+    return HttpResponse("success")

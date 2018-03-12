@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .modal{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0,0,0,.2);
+            right: 0;
+            display: none;
+            transform: all .5s;
+        }
+        .modal-dialog{
+            min-width: 40%;
+                border: 1px solid rgb(153, 153, 153);
+                border-radius: 5px;
+                position: absolute;
+                background: rgb(255, 255, 255);
+                top: 50%;
+                transform: translate(-50%,-50%);
+                left: 50%;
+        }
+        @media screen and (max-width:764px){
+            .modal-dialog{
+                min-width: 350px;
+            }
+        }
+        .modal-header,.modal-content,.modal-controller{
+            padding:8px 15px;
+        }
+        .modal-header{
+            background: rgb(37, 153, 242);
+            color: rgb(255, 255, 255);
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+        .modal-controller{
+            background: rgb(247, 247, 247);
+        border-top: 1px solid rgba(153, 153, 153, 0.31);
+        }
+        .modal-header .close{
+            float: right;
+        margin-right: -10px;
+        text-decoration: none;
+        font-size: 30px;
+        margin-top: -11px;
+        color: rgb(255, 255, 255);
+        font-weight: 300;
+        }
+        .modal-content{
+
+        }
+        .modal-controller{
+            text-align: center;
+        }
+        .modal button{
+            padding:3px 10px;
+            border-radius: 3px;
+            border:1px solid #999;
+        }
+        .modal .btn-ok{
+            background: #2599F2;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="modal" id='modal'>
+        <div class="modal-dialog">
+            <div class="modal-header">对话框标题<a href="#" class="close">×</a></div>
+            <div class="modal-content">对话框的内容</div>
+            <div class="modal-controller">
+                <button class='btn-ok'>确定</button>
+                <button class='bnt-close close'>取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    (function(window){
+        var Modal=function(ele){
+            this.$el=ele;
+            this.init();
+        }
+        Modal.prototype.close=function(){
+            this.$el.style.display='none';
+        }
+        Modal.prototype.open=function(){
+            this.$el.style.display='block';
+        }
+        Modal.prototype.init=function(){
+            var self=this;
+            if(this.$el.addEventListener){
+                this.$el.addEventListener('click',function(e){
+                    e.preventDefault();
+                    var target=e.target;
+                    var classNames=target.className.split(' ');
+                    if(classNames.indexOf('close')!==-1){
+                        self.close();
+                    }
+                },false);
+            }else if(this.$el.attachEvent){
+                this.$el.attachEvent('onclick',function(e){
+                        e=e||window.event;
+                    if(e.preventDefault){
+                        e.preventDefault();
+                    }else{
+                        e.returnValue=false;
+                    }
+                    var target=e.target||e.srcElement;
+                    var classNames=target.className.split(' ');
+                    if(classNames.indexOf('close')!==-1){
+                        self.close();
+                    }
+                });
+            }
+        }
+        window.Modal=Modal;
+    })(window);
+    var modal=new Modal(document.getElementById('modal'));
+    function openModal(){
+        modal.open();
+    }
+    openModal()
+</script>
+</html>
